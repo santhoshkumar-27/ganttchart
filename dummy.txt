@@ -1,0 +1,83 @@
+        function showGroups(listname = 'user') {
+            if (listname != null) {
+                var relation = '';
+                if (listname == 'user') {
+                    relation = 'user';
+
+                } else if (listname == 'projectGroups') {
+                    relation = 'project';
+                } else {
+                    relation = listname;
+                }
+
+                if (listname == 'position') {
+                    gantt.getGridColumn("text").hide = false;
+                    gantt.getGridColumn("project").hide = false;
+                    gantt.getGridColumn("position").hide = true;
+
+                    gantt.getGridColumn("project").tree = false;
+                    gantt.getGridColumn("text").tree = true;
+                }
+                else if (listname == 'project') {
+                    gantt.getGridColumn("text").hide = false;
+                    gantt.getGridColumn("project").hide = true;
+                    gantt.getGridColumn("position").hide = false;
+
+                    gantt.getGridColumn("project").tree = false;
+                    gantt.getGridColumn("text").tree = true;
+                }
+                else if (listname == 'user') {
+                    gantt.getGridColumn("text").hide = true;
+                    gantt.getGridColumn("project").hide = false;
+                    gantt.getGridColumn("position").hide = false;
+
+                    gantt.getGridColumn("text").tree = false;
+                    gantt.getGridColumn("project").tree = true;
+                }
+
+                gantt.groupBy({
+                    groups: gantt.serverList(listname),
+                    relation_property: relation,
+                    group_id: "key",
+                    group_text: "label"
+                });
+                gantt.sort("start_date", false);
+            } else {
+                gantt.groupBy(false);
+            }
+        }
+        var ganttPosition = [
+            { key: 'accb6b17-e1a8-452f-976d-36e0aa66ba58', label: 'developer' },
+            { key: '0fa50fb5-1d11-4753-a04c-1a7e779a22f6', label: 'tester' }
+        ]
+        var ganttUser = [
+            { key: '086899c3-dca9-454d-a2cc-14caf8e584ea', label: 'Addison R' }
+            , { key: 'a2a52d4f-c7f6-4678-9b96-1f5b507da514', label: 'Ruby s' }
+            , { key: '3d89a044-74fb-4134-bbc1-bedecf64f7eb', label: 'Sai s' }
+        ];
+        var ganttProject = [
+            { key: 'aec49d26-e0a5-403b-9496-32a46ad2327f', label: 'Nokia' }
+            , { key: '4c726798-65b2-4e82-a724-ac9abfddacdd', label: 'Daikin' },
+            { key: '163ccee5-13bd-42bc-97ba-c1a285597892', label: 'accendure' }
+        ];
+        var ganttUserGroups = [
+            { key: '086899c3-dca9-454d-a2cc-14caf8e584ea', label: 'Addison R', user: '0fa50fb5-1d11-4753-a04c-1a7e779a22f6' }
+            , { key: 'accb6b17-e1a8-452f-976d-36e0aa66ba58', label: 'developer' }
+            , { key: '0fa50fb5-1d11-4753-a04c-1a7e779a22f6', label: 'tester' }
+            , { key: 'a2a52d4f-c7f6-4678-9b96-1f5b507da514', label: 'Ruby s', user: 'accb6b17-e1a8-452f-976d-36e0aa66ba58' }
+            , { key: '3d89a044-74fb-4134-bbc1-bedecf64f7eb', label: 'Sai s', user: '0fa50fb5-1d11-4753-a04c-1a7e779a22f6' }
+
+        ];
+        var ganttProjectGroups = [
+            { key: '086899c3-dca9-454d-a2cc-14caf8e584ea', label: 'Addison R', project: '4c726798-65b2-4e82-a724-ac9abfddacdd' }
+            , { key: 'aec49d26-e0a5-403b-9496-32a46ad2327f', label: 'Nokia' }
+            , { key: '4c726798-65b2-4e82-a724-ac9abfddacdd', label: 'Daikin' }
+            , { key: 'a2a52d4f-c7f6-4678-9b96-1f5b507da514', label: 'Ruby s', project: 'aec49d26-e0a5-403b-9496-32a46ad2327f' }
+            , { key: '163ccee5-13bd-42bc-97ba-c1a285597892', label: 'accendure' }
+            , { key: '3d89a044-74fb-4134-bbc1-bedecf64f7eb', label: 'Sai s', project: '4c726798-65b2-4e82-a724-ac9abfddacdd' }
+        ];
+        gantt.serverList("position", ganttPosition);
+        gantt.serverList("user", ganttUser);
+        gantt.serverList("project", ganttProject);
+        gantt.serverList("userGroups", ganttUserGroups);
+        gantt.serverList("projectGroups", ganttProjectGroups);

@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="description"
+        content="This demo illustrates the ability to view and expand split tasks in DHTMLX Gantt chart." />
+    <title>Gantt Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous">
+        </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+        integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://docs.dhtmlx.com/gantt/codebase/dhtmlxgantt.js?v=6.1.7"></script>
+    <link rel="stylesheet" type="text/css" href="https://docs.dhtmlx.com/gantt/codebase/dhtmlxgantt.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment-with-locales.min.js"
+        integrity="sha512-vFABRuf5oGUaztndx4KoAEUVQnOvAIFs59y4tO0DILGWhQiFnFHiR+ZJfxLDyJlXgeut9Z07Svuvm+1Jv89w5g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript" src="data.json"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+            padding: 0px;
+            margin: 0px;
+            overflow: hidden;
+        }
+
+        .gantt .gantt-chart .timeline-header-table-container>thead>tr>th {
+            border-left: 0;
+            padding: 0 3px;
+            color: #8898aa;
+            background-color: #f6f9fc;
+            border-color: #e9ecef;
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            line-height: 1.625;
+            font-weight: 400;
+        }
+
+        .gantt .gantt-chart {
+            color: #8898aa;
+            background-color: #f6f9fc;
+            border-color: #e9ecef;
+        }
+
+        #treeGridganttDefault_gridcontrol td {
+            padding: 1rem;
+        }
+
+        #GanttTaskTableganttDefault td {
+            padding: 1rem;
+            height: 80px;
+        }
+
+        .gantt-employe {
+            width: 84px;
+            word-break: break-word;
+            white-space: pre;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .gantt_grid_scale .gantt_grid_head_cell {
+            /* height: 43px; */
+            background: #172b4d !important;
+            color: white !important;
+            border-top: none !important;
+            border-right: none !important;
+        }
+
+        .gantt_position {
+            border: 1px solid #707070;
+            background: #fff;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .gantt_folder_closed {
+            display: none;
+        }
+
+        .gantt_folder_open {
+            display: none;
+        }
+
+        .gantt_task_scale,
+        .gantt_scale_line {
+            background: #172b4d !important;
+        }
+
+        .gantt_grid_scale .gantt_grid_head_cell,
+        .gantt_scale_cell {
+            background: #172b4d !important;
+            color: white !important;
+            border-top: none !important;
+            border-right: none !important;
+        }
+
+        .gantt_grid_head_cell {
+            text-transform: uppercase;
+        }
+
+        .gantt_task_content {
+            text-align: left !important;
+            left: 10px;
+        }
+
+        /* 
+        .gantt_task_line.gantt_project {
+            background-color: #006b0c !important;
+        } */
+
+        .gantt_task_content {
+
+            text-align: left !important;
+            left: 8px;
+
+        }
+
+        .gantt_task_content {
+            color: rgb(255, 255, 255) !important;
+        }
+
+        /* .gantt_task_progress_wrapper,
+        .gantt_task_line {
+            background: rgb(24, 95, 107) !important;
+        } */
+        /* .gantt_project .gantt_task_progress_wrapper  {
+            background: rgb(24, 95, 107) !important;
+        }
+        .gantt_bar_task .gantt_task_progress_wrapper  {
+            background: rgb(209, 110, 17) !important;
+        }
+        .gantt_split_parent .gantt_task_progress_wrapper  {
+            background: rgb(208 210 22) !important;
+        } */
+
+
+        /* .gantt_task_inline_color .gantt_task_progress_wrapper .gantt_task_line {
+            background-color: blue !important;
+        } */
+    </style>
+</head>
+
+<body>
+    <div class="row">
+        <div class="col-6">
+            <button type="button" onclick="showGroups('user')">name</button>
+            <button type="button" onclick="showGroups('position')">position</button>
+            <button type="button" onclick="showGroups('project')">project</button>
+        </div>
+        <div class="col-6">
+            <span class="radio_scale mr-2"><input type="radio" id="scale1" class="gantt_radio" name="scale" value="day">
+                <label for="scale1" class="ml-1 font-14">Day</label></span>
+
+            <span class="radio_scale mr-2"><input type="radio" id="scale2" class="gantt_radio" name="scale"
+                    value="week">
+                <label for="scale2" class="ml-1 font-14">Week</label></span>
+
+            <span class="radio_scale mr-2"><input type="radio" id="scale3" class="gantt_radio" name="scale"
+                    value="month">
+                <label for="scale3" class="ml-1 font-14">Month</label></span>
+
+            <span class="radio_scale mr-3"><input type="radio" id="scale4" class="gantt_radio" name="scale"
+                    value="year">
+                <label for="scale4" class="ml-1 font-14">Year</label></span>
+        </div>
+    </div>
+    <div class="row w-100 h-100">
+        <div id="gantt_here" style='width:100%; height:calc(100% - 60px);'></div>
+    </div>
+    <script>
+        gantt.plugins({
+            undo: true,
+            multiselect: true,
+            grouping: true,
+            tooltip: true,
+            marker: true
+        })
+
+        var zoomConfig = {
+            levels: [
+                {
+                    name: "day",
+                    scale_height: 72,
+                    min_column_width: 35,
+                    scales: [
+                        { unit: "month", format: "%M %Y" },
+                        {
+                            unit: "day", step: 1, format: function (date) {
+                                var dateToStr = gantt.date.date_to_str("%d");
+                                var monthStr = gantt.date.date_to_str("%M %Y");
+
+                                return "<span area-fulldate='" + dateToStr(date) + ' ' + monthStr(date) + "'>" + dateToStr(date) + "</span>";
+                            }
+                        },
+                    ]
+                },
+                {
+                    name: "week",
+                    scale_height: 72,
+                    min_column_width: 50,
+                    scales: [
+                        { unit: "month", format: "%M %Y" },
+                        {
+                            unit: "week", step: 1, format: function (date) {
+                                var dateToStr = gantt.date.date_to_str("%d");
+                                var monthStr = gantt.date.date_to_str("%M %Y");
+
+                                return "<span area-fulldate='" + dateToStr(date) + ' ' + monthStr(date) + "'>" + dateToStr(date) + "</span>";
+                            }
+                        },
+                    ]
+                },
+                {
+                    name: "month",
+                    scale_height: 72,
+                    min_column_width: 30,
+                    scales: [
+                        { unit: "year", step: 1, format: "%Y" },
+                        { unit: "month", format: "%M" },
+                    ]
+                },
+                {
+                    name: "quarter",
+                    height: 72,
+                    min_column_width: 90,
+                    scales: [
+                        { unit: "year", step: 1, format: "%Y" },
+                        { unit: "month", step: 1, format: "%M" },
+                        {
+                            unit: "quarter", step: 1, format: function (date) {
+                                return "Q" + (Math.floor((date.getMonth() / 3)) + 1);
+                            }
+                        }
+                    ]
+                },
+                {
+                    name: "year",
+                    scale_height: 72,
+                    min_column_width: 30,
+                    scales: [
+                        { unit: "year", step: 1, format: "%Y" }
+                    ]
+                }
+            ]
+        };
+
+
+        gantt.config.show_progress = false;
+        gantt.config.drag_links = false;
+        gantt.config.smart_rendering = false;
+        gantt.config.auto_types = true;
+        gantt.config.auto_scheduling = true;
+        gantt.config.auto_scheduling_compatibility = true;
+        gantt.locale.labels.section_split = "Display";
+
+        gantt.config.order_branch = true;
+        gantt.config.grid_width = 420;
+        gantt.config.row_height = 20;
+        gantt.config.grid_resize = true;
+        gantt.config.sort = true;
+        gantt.locale.labels.column_position = gantt.locale.labels.section_position = "Position";
+        gantt.locale.labels.column_project = gantt.locale.labels.section_project = "Project";
+
+        gantt.config.columns = [
+            { name: "text", label: "Name", tree: true, width: 180 },
+            {
+                name: "project", width: 100, tree: false, align: "left", template: (item) => {
+                    return byId(gantt.serverList('project'), item.project)
+                }
+            },
+            {
+                name: "position", width: 100, align: "left", template: (item) => {
+                    return byId(gantt.serverList('position'), item.position)
+                }
+            },
+            {
+                name: "buttons", label: "", width: 40, template: (task) => {
+                    if (task.type != 'project') {
+                        return (
+                            '<i class="fa fa-plus pr-3 pointer" data-action="add"></i>'
+                        );
+                    }
+                }
+            },
+        ];
+
+        gantt.templates.grid_row_class =
+            gantt.templates.task_row_class = function (start, end, task) {
+                if (task.$virtual)
+                    return "summary-row"
+            };
+        gantt.templates.task_class = function (start, end, task) {
+            if (task.$virtual)
+                return "summary-bar";
+        };
+
+        gantt.templates.task_text = function (start, end, task) {
+            var taskStartPos = gantt.posFromDate(task.start_date),
+                taskEndPos = gantt.posFromDate(task.end_date);
+
+            var width = taskEndPos - taskStartPos;
+            if (width > 100 && width < 300) {
+                if (task.project_name == undefined) {
+                    return task.text;
+                }
+                return task.project_name;
+            }
+            else if (width > 300) {
+                if (task.project_name == undefined) {
+                    return task.text + ', ' + moment(task.start_date).format('MM/DD/YYYY') + ' - ' + moment(task.end_date).format('MM/DD/YYYY');
+                }
+                return task.project_name + ', ' + moment(task.start_date).format('MM/DD/YYYY') + ' - ' + moment(task.end_date).format('MM/DD/YYYY');
+            }
+            else {
+                return '';
+            }
+        };
+
+        gantt.templates.tooltip_text = function (start, end, task) {
+            var tooltips = gantt.ext.tooltips;
+            tooltips.tooltipFor({
+                selector: ".gantt_scale_cell",
+                html: function (event, domElement) {
+                    var element = (domElement).getElementsByTagName('span');
+                    if (element.length > 0) {
+                        for (let i = 0; i < element.length; i++) {
+                            const html = element[i].getAttribute('area-fulldate');
+                            return html;
+                        }
+                    }
+                    else {
+                        return domElement.innerHTML;
+                    }
+                }
+            });
+
+            if (task.duration != 1) {
+                let projectname = "";
+                if (task.project_name != undefined) {
+                    projectname = "<br/><b>Project:</b> " + task.project_name;
+                }
+
+                if (task.type == "vacation") {
+                    return "<b>Vacation Date:</b><br/><b>Start Date:</b> " + moment(task.start_date).format('MM/DD/YYYY') + "<br/><b>End Date:</b> " + moment(task.end_date).format('MM/DD/YYYY') + projectname + "<br/><b>Name:</b> " + task.text;
+                }
+                else {
+                    return "<b>Start Date:</b> " + moment(task.start_date).format('MM/DD/YYYY') + "<br/><b>End Date:</b> " + moment(task.end_date).format('MM/DD/YYYY') + projectname + "<br/><b>Name:</b> " + task.text;
+                }
+            }
+            else {
+                return "<b>Name:</b> " + task.text;
+            }
+        };
+
+        gantt.templates.timeline_cell_class = function (task, date) {
+            var scale = document.getElementsByName('scale');
+            var scalechecked;
+            for (var i = 0; i < scale.length; i++) {
+                if ((scale[i]).checked) {
+                    scalechecked = (scale[i]).value;
+                }
+            }
+
+            if (scalechecked == 'day') {
+                if (date.getDay() == 0 || date.getDay() == 6) {
+                    return "weekend";
+                }
+            }
+        };
+
+        gantt.ext.zoom.init(zoomConfig);
+
+        //default day set
+        gantt.ext.zoom.setLevel("day");
+
+        const dp = gantt.createDataProcessor({
+            task: {
+                update: (data) => {
+
+                },
+                create: (data) => this.taskService.insert(data).catch((error) => {
+                    this.alert.error("Error")
+                }),
+                delete: (id) => this.taskService.remove(id).then((res) => {
+                    this.alert.success(res.message);
+                }).catch((error) => {
+                    gantt.undo();
+                    if ('message' in error.error) {
+                        this.alert.error(error.error.message);
+                    } else {
+                        this.alert.error("Something went wrong. Try again later.")
+                    }
+                })
+            },
+            link: {
+                update: (data) => this.linkService.update(data).catch((error) => {
+                    this.alert.error("Error")
+                }),
+            }
+        });
+
+        var radios = document.getElementsByName("scale");
+        for (var i = 0; i < radios.length; i++) {
+            radios[i].onclick = function (event) {
+                gantt.ext.zoom.setLevel(event.target['value']);
+            };
+        }
+
+        gantt.event(window, 'mousemove', function (e) {
+            if (!gantt.$container) {
+                return;
+            }
+            var position = gantt.utils.dom.getRelativeEventPosition(e, gantt.$container);
+            var ganttWidth = gantt.$container.offsetWidth;
+            var ganttHeight = gantt.$container.offsetHeight;
+
+            if (position.x < 0 ||
+                position.y < 0 ||
+                position.x > ganttWidth ||
+                position.y > ganttHeight) {
+                gantt.ext.tooltips.tooltip.hide();
+            }
+        });
+
+
+        gantt.attachEvent("onGanttScroll", function (left, top) {
+            if (top) {
+                var taskrow = Array.from(document.getElementsByClassName('gantt_row'));
+                for (var i = 0; i < taskrow.length; i++) {
+                    var parentName = taskrow[i].getAttribute('aria-label').split('Name:')[1];
+
+                    var taskcontent = Array.from(taskrow[i].getElementsByClassName('gantt_tree_content'));
+                    if (taskcontent[0].innerText == '') {
+                        taskcontent[0].innerText = parentName;
+                    }
+                }
+            }
+
+            // any custom logic here
+            var scale = document.getElementsByName('scale');
+            var getselectedradio;
+            for (var i = 0; i < scale.length; i++) {
+                if ((scale[i]).checked) {
+                    getselectedradio = (scale[i]).value;
+                }
+            }
+
+            if (getselectedradio == 'day') {
+                var ganttchart = document.getElementById("gantt_here");
+                if (ganttchart.childNodes.length > 0) {
+                    var scaleline = Array.from(document.getElementsByClassName('gantt_scale_line'));
+                    var scalecontent = Array.from(scaleline[0].getElementsByClassName('gantt_scale_cell'));
+                    for (var i = 0; i < scalecontent.length; i++) {
+                        scalecontent[i].style.textAlign = 'left';
+                        scalecontent[i].style.left = (parseInt(scalecontent[i].style.left.split('px')[0]) + 12) + 'px';
+                    }
+
+                    var scalewidth = parseInt(scalecontent[0].style.width.split('px')[0]);
+                    var scaleleft = parseInt(scalecontent[0].style.left.split('px')[0]);
+                    var getScaleTotLeft = (scalewidth + scaleleft) - 200;
+                    if (left > this.ganttPreviousScroll) {
+                        var getScaleLeft = (left + 200);
+                        if (getScaleLeft < getScaleTotLeft) {
+                            scalecontent[0].style.left = getScaleLeft + 'px';
+                        }
+                    }
+                    else {
+                        var getScaleLeft = (left + 200);
+                        if (getScaleLeft > scaleleft) {
+                            scalecontent[0].style.left = getScaleLeft + 'px';
+                        }
+                    }
+                }
+            }
+
+            var taskline = Array.from(document.getElementsByClassName('gantt_task_line'));
+            for (var i = 0; i < taskline.length; i++) {
+                var parentwidth = parseInt(taskline[i].style.width.split('px')[0]) - 200;
+                var parentleft = parseInt(taskline[i].style.left.split('px')[0]);
+                var taskcontent = Array.from(taskline[i].getElementsByClassName('gantt_task_content'));
+                var getStyle = taskcontent[0].getAttribute('style');
+                if (getStyle) {
+                    if (left > this.ganttPreviousScroll) {
+                        var getleftStyle = (left - parentleft) + 50;
+
+                        if (getleftStyle > 10 && getleftStyle < parentwidth) {
+                            taskcontent[0].style.left = getleftStyle + 'px';
+                        }
+                    }
+                    else {
+                        var getleftStyle = (left - parentleft) + 50;
+                        if (getleftStyle < 10) {
+                            taskcontent[0].style.left = '10px';
+                        }
+                        else if (getleftStyle < parentwidth) {
+                            taskcontent[0].style.left = getleftStyle + 'px';
+                        }
+                    }
+                }
+                else {
+                    taskcontent[0].style.left = '10px';
+                }
+            }
+
+            this.ganttPreviousScroll = left;
+        });
+
+        gantt.attachEvent("onDataRender", function () {
+            //any custom logic here
+            var taskrow = Array.from(document.getElementsByClassName('gantt_row'));
+            for (var i = 0; i < taskrow.length; i++) {
+                var parentName = taskrow[i].getAttribute('aria-label').split('Name:')[1];
+
+                var taskcontent = Array.from(taskrow[i].getElementsByClassName('gantt_tree_content'));
+                if (taskcontent[0].innerText == '') {
+                    taskcontent[0].innerText = parentName;
+                }
+            }
+        });
+
+        gantt.attachEvent("onTaskLoading", function (task) {
+            let todaydate = new Date();
+            gantt.addMarker({
+                start_date: new Date(todaydate.getFullYear(), todaydate.getMonth(), 15),
+                css: "today",
+                text: '',
+            });
+
+            task.$open = false;
+            return true;
+        });
+
+        gantt.attachEvent("onBeforeLightBox", (id, e) => {
+            const data = gantt.getTask(id);
+            if (data.type == 'project') {
+                return false;
+            } else {
+                return true;
+            }
+        });
+
+        gantt.attachEvent("onTaskClick", (id, e) => {
+            showGroupName();
+            gantt.ext.tooltips.tooltip.hide();
+            this.ganttChooseEmpID = gantt.getTask(id).user;
+            var button = e.target.closest("[data-action]")
+            if (button) {
+                var action = button.getAttribute("data-action");
+                switch (action) {
+                    case "add":
+                        document.getElementById('assignmentAddBtn').click();
+                        break;
+                    case "delete":
+                        gantt.deleteTask(id);
+                        break;
+                }
+                return false;
+            }
+            return true;
+        }, null);
+
+        gantt.attachEvent("onTaskDblClick", function (id, e) {
+            //any custom logic here
+            return false;
+        });
+
+        gantt.attachEvent("onBeforeTaskDisplay", (id, task) => {
+            var normalizedText = task.text.toLowerCase();
+            // var normalizedValue = this.ganttFilters.search.toLowerCase();
+            return normalizedText;
+        });
+
+        gantt.attachEvent("onTaskDrag", function (id, mode, task, original) {
+            let currentDate = new Date();
+            if ((currentDate >= task.start_date) && (currentDate <= task.end_date)) {
+                task.color = "#3B7312";
+            } else if (currentDate > task.end_date) {
+                task.color = "#595959";
+            } else if (currentDate < task.end_date) {
+                task.color = "#F26A1B";
+            }
+        }, null);
+
+        gantt.attachEvent("onAfterTaskDrag", (id, mode, task, original) => {
+            showGroupName();
+            if (true) {
+                this.loading = true;
+                this.serviceloading = true;
+                const data = gantt.getTask(id);
+                data.start_date = moment(data.start_date).format('YYYY-MM-DD');
+                data.end_date = moment(data.end_date).format('YYYY-MM-DD');
+
+                this.taskService.update(data).then((result) => {
+                    this.loading = false;
+                    this.alert.success("Assignment updated");
+                    setTimeout(() => {
+                        this.serviceloading = false;
+                    }, 5000);
+                }).catch((error) => {
+                    this.loading = false;
+                    setTimeout(() => {
+                        this.serviceloading = false;
+                    }, 5000);
+                    gantt.undo();
+                    this.alert.clear();
+                    if ('message' in error.error) {
+                        this.alert.error(error.error.message);
+                    } else {
+                        this.alert.error("Something went wrong. Try again later.")
+                    }
+
+                });
+            }
+        }, null);
+
+        gantt.config.open_split_tasks = true;
+
+        gantt.init("gantt_here");
+
+        var ganttPosition = [
+            { key: 'accb6b17-e1a8-452f-976d-36e0aa66ba58', label: 'developer' },
+            { key: '0fa50fb5-1d11-4753-a04c-1a7e779a22f6', label: 'tester' }
+        ]
+        var ganttUser = [
+            { key: '086899c3-dca9-454d-a2cc-14caf8e584ea', label: 'Addison R' }
+            // , { key: 'a2a52d4f-c7f6-4678-9b96-1f5b507da514', label: 'Ruby s' }
+            // , { key: '3d89a044-74fb-4134-bbc1-bedecf64f7eb', label: 'Sai s' }
+        ];
+        var ganttProject = [
+            { key: 'aec49d26-e0a5-403b-9496-32a46ad2327f', label: 'Nokia' }
+            , { key: '4c726798-65b2-4e82-a724-ac9abfddacdd', label: 'Daikin' },
+            { key: '163ccee5-13bd-42bc-97ba-c1a285597892', label: 'accendure' }
+        ];
+        var ganttUserGroups = [
+            { key: '086899c3-dca9-454d-a2cc-14caf8e584ea', label: 'Addison R', user: '0fa50fb5-1d11-4753-a04c-1a7e779a22f6' }
+            // , { key: 'accb6b17-e1a8-452f-976d-36e0aa66ba58', label: 'developer' }
+            // , { key: '0fa50fb5-1d11-4753-a04c-1a7e779a22f6', label: 'tester' }
+            // , { key: 'a2a52d4f-c7f6-4678-9b96-1f5b507da514', label: 'Ruby s', user: 'accb6b17-e1a8-452f-976d-36e0aa66ba58' }
+            // , { key: '3d89a044-74fb-4134-bbc1-bedecf64f7eb', label: 'Sai s', user: '0fa50fb5-1d11-4753-a04c-1a7e779a22f6' }
+
+        ];
+        var ganttProjectGroups = [
+            { key: '086899c3-dca9-454d-a2cc-14caf8e584ea', label: 'Addison R', project: '4c726798-65b2-4e82-a724-ac9abfddacdd' }
+            , { key: 'aec49d26-e0a5-403b-9496-32a46ad2327f', label: 'Nokia' }
+            // , { key: '4c726798-65b2-4e82-a724-ac9abfddacdd', label: 'Daikin' }
+            // , { key: 'a2a52d4f-c7f6-4678-9b96-1f5b507da514', label: 'Ruby s', project: 'aec49d26-e0a5-403b-9496-32a46ad2327f' }
+            // , { key: '163ccee5-13bd-42bc-97ba-c1a285597892', label: 'accendure' }
+            // , { key: '3d89a044-74fb-4134-bbc1-bedecf64f7eb', label: 'Sai s', project: '4c726798-65b2-4e82-a724-ac9abfddacdd' }
+        ];
+        gantt.serverList("position", ganttPosition);
+        gantt.serverList("user", ganttUser);
+        gantt.serverList("project", ganttProject);
+        gantt.serverList("userGroups", ganttUserGroups);
+        gantt.serverList("projectGroups", ganttProjectGroups);
+
+
+        showGroups('project');
+        gantt.parse({
+            data: data8,
+            links: ''
+        });
+        gantt.refreshData();
+        gantt.sort("start_date", false);
+
+
+
+        function byId(list, id) {
+            for (var i = 0; i < list.length; i++) {
+                if (list[i].key == id)
+                    return list[i].label || "";
+            }
+            return "";
+        }
+        function showGroups(listname = 'user') {
+            if (listname != null) {
+                var relation = '';
+                if (listname == 'user') {
+                    relation = 'user';
+
+                } else if (listname == 'project') {
+                    relation = 'project';
+                } else {
+                    relation = listname;
+                }
+
+                if (listname == 'position') {
+                    gantt.getGridColumn("text").hide = false;
+                    gantt.getGridColumn("project").hide = false;
+                    gantt.getGridColumn("position").hide = true;
+
+                    gantt.getGridColumn("project").tree = false;
+                    gantt.getGridColumn("text").tree = true;
+                }
+                else if (listname == 'project') {
+                    gantt.getGridColumn("text").hide = false;
+                    gantt.getGridColumn("project").hide = true;
+                    gantt.getGridColumn("position").hide = false;
+
+                    gantt.getGridColumn("project").tree = false;
+                    gantt.getGridColumn("text").tree = true;
+                }
+                else if (listname == 'user') {
+                    gantt.getGridColumn("text").hide = true;
+                    gantt.getGridColumn("project").hide = false;
+                    gantt.getGridColumn("position").hide = false;
+
+                    gantt.getGridColumn("text").tree = false;
+                    gantt.getGridColumn("project").tree = true;
+                }
+
+                gantt.groupBy({
+                    groups: gantt.serverList(listname),
+                    relation_property: relation,
+                    group_id: "key",
+                    group_text: "label"
+                });
+                gantt.sort("start_date", false);
+            } else {
+                gantt.groupBy(false);
+            }
+        }
+
+        function showGroupName() {
+            var taskrow = Array.from(document.getElementsByClassName('gantt_row'));
+            for (var i = 0; i < taskrow.length; i++) {
+                var parentName = taskrow[i].getAttribute('aria-label').split('Name:')[1];
+
+                var taskcontent = Array.from(taskrow[i].getElementsByClassName('gantt_tree_content'));
+                if (taskcontent[0].innerText == '') {
+                    taskcontent[0].innerText = parentName;
+                }
+            }
+        }
+
+    </script>
+</body>
